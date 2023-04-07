@@ -9,10 +9,9 @@ public class Client {
 
     Client(String nom) {
         this.nom = nom;
-        this.nbComptes = 0;
         this.solde = 0;
+        this.nbComptes = 0;
         this.comptes = new Compte[100];
-        this.ajouterCompte();
     }
 
     public String getNom() {
@@ -40,11 +39,23 @@ public class Client {
     }
 
     public void deposer(Compte compte, float valeur) {
-        //this.solde = this.solde + valeur;
+        compte.setSolde(+valeur);
+        this.solde += valeur;
+        System.out.println("\nNouveau solde du compte " + compte.getIban() + " : " + compte.getSolde() + " €");
     }
 
-    public void retirer(Compte compte, float valeur) {
-
+    public boolean retirer(Compte compte, float valeur) {
+        float solde = compte.getSolde();
+        boolean succes = false;
+        if (solde >= valeur) {
+            compte.setSolde(-valeur);
+            this.solde -= valeur;
+            System.out.println("\nNouveau solde du compte " + compte.getIban() + " : " + compte.getSolde() + " €");
+            succes = true;
+        } else {
+            System.out.println("\nLe compte " + compte.getIban() + " n'est pas suffisamment approvisionné pour pouvoir effectuer cette opération.");
+        }
+        return succes;
     }
 
     public String ajouterCompte() {

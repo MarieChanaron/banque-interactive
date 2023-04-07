@@ -11,7 +11,7 @@ public class Main {
 
         while (choix.equals("o")) {
             BanqueInteractive.interagir();
-            System.out.println("Voulez-vous faire autre chose ?");
+            System.out.println("\nVoulez-vous faire autre chose ?");
             System.out.println("o : oui | n : non");
             choix = scanner.next();
         }

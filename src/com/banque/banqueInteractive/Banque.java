@@ -39,11 +39,16 @@ public class Banque {
     }
 
     public void afficherBilanClient(Client client) {
+        System.out.println("\nBILAN DU CLIENT : " + client.getNom());
         Compte[] comptes = client.getComptes();
-        byte nbComptes = client.getNbComptes();
+        int nbComptes = client.getNbComptes();
+        System.out.println("==============================================");
         for (int i = 0; i < nbComptes; i++) {
             comptes[i].afficherSolde();
+            System.out.println("----------------------------------------------");
         }
+        client.afficherSolde();
+        System.out.println("==============================================");
     }
 
     public void afficherBilanGeneral() {
@@ -54,5 +59,14 @@ public class Banque {
                 break;
             }
         }
+        float solde = 0;
+        for (int i = 0; i < clients.length; i++) {
+            if (clients[i] != null) {
+                solde += clients[i].getSolde();
+            } else {
+                break;
+            }
+        }
+        System.out.println("\nSOLDE GLOBAL : " + solde);
     }
 }

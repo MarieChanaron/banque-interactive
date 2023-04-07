@@ -1,5 +1,6 @@
 package com.banque.banqueInteractive;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class BanqueInteractive {
@@ -11,12 +12,12 @@ public class BanqueInteractive {
 
     private static void ajouterClient(String nomNouveauClient) {
         if (nomNouveauClient == null) {
-            System.out.println("Entrez le nom du client :");
+            System.out.println("\nEntrez le nom du client :");
             nomNouveauClient = scanner.next();
         }
         banque.ajouterClient(nomNouveauClient);
-        System.out.println("Le client " + nomNouveauClient + " a été ajouté.");
-        System.out.println("Voulez-vous effectuer une opération pour ce client ?");
+        System.out.println("\nLe client " + nomNouveauClient + " a été ajouté.");
+        System.out.println("\nVoulez-vous effectuer une opération pour ce client ?");
         System.out.println("o : oui | n : non");
         String choix = scanner.next();
         if (choix.equals("o")) {
@@ -28,42 +29,81 @@ public class BanqueInteractive {
 
     public static void ouvrirCompte(Client client) {
         String iban = client.ajouterCompte();
-        System.out.println("Le compte a été ajouté avec le numéro " + iban);
+        System.out.println("\nLe compte a été ajouté avec le numéro " + iban);
     }
 
 
 
     public static void afficherBilan(Client client) {
-        Compte[] comptes = client.getComptes();
-        int nbComptes = client.getNbComptes();
-        System.out.println("==============================================");
-        for (int i = 0; i < nbComptes; i++) {
-            comptes[i].afficherSolde();
-            System.out.println("---------------------------------------------");
-        }
-        client.afficherSolde();
-        System.out.println("=============================================");
+        banque.afficherBilanClient(client);
     }
 
 
 
-    public static void effectuerRetrait(Client client) {}
-    public static void effectuerDepot(Client client) {}
-    public static void effectuerVirement(Client client) {}
+    public static void effectuerRetrait(Client client) {
+        System.out.println("Combien souhaite retirer le client " + client.getNom() + " ?");
+        float montant = scanner.nextFloat();
+        client.retirer(client.getComptes()[0], montant);
+    }
+
+
+
+    public static void effectuerDepot(Client client) {
+        System.out.println("Combien souhaite déposer le client " + client.getNom() + " ?");
+        float montant = scanner.nextFloat();
+        client.deposer(client.getComptes()[0], montant);
+    }
+
+
+
+    public static void effectuerVirement(Client client) {
+
+        int nbComptes = client.getNbComptes();
+        Compte[] comptes = client.getComptes();
+
+        System.out.println("\nDe quel compte le/la client(e) " + client.getNom() + " souhaite effectuer un virement ?");
+        for (int i = 0; i < nbComptes; i++) {
+            System.out.println((i + 1) + ") " + comptes[i].getIban());
+        }
+        int choix1 = scanner.nextInt();
+        Compte origine = comptes[choix1 - 1];
+        System.out.println(origine.getIban());
+
+        System.out.println("\nVers quel compte ?");
+        Compte[] destinations = new Compte[nbComptes - 1];
+        int j = 0;
+        for (int i = 0; i < nbComptes; i++) {
+            if (!comptes[i].equals(origine)) {
+                destinations[j++] = comptes[i];
+                System.out.println(j + ")" + comptes[i].getIban());
+            }
+        }
+        int choix2 = scanner.nextInt();
+        Compte destination = destinations[choix2 - 1];
+
+        System.out.println("Vous souhaitez effectuer un virement du compte " + origine.getIban() + " vers le compte " + destination.getIban() + ".");
+        System.out.println("Veuillez saisir le montant :");
+        float montant = scanner.nextFloat();
+
+        if (client.retirer(origine, montant)) {
+            client.deposer(destination, montant);
+        }
+
+    }
 
 
 
     private static void effectuerOperationClient(String nomNouveauClient) {
         String nom;
         if (nomNouveauClient.length() == 0) {
-            System.out.println("Entrez le nom du client");
+            System.out.println("\nEntrez le nom du client");
             nom = scanner.next();
         } else {
             nom = nomNouveauClient;
         }
         try {
             Client client = banque.getClient(nom);
-            System.out.println("Quelle opération voulez-vous effectuer ?");
+            System.out.println("\nQuelle opération voulez-vous effectuer ?");
             System.out.println("1) Ouvrir un compte");
             System.out.println("2) Afficher un bilan");
             System.out.println("3) Faire un retrait");
@@ -88,8 +128,8 @@ public class BanqueInteractive {
                     break;
             }
         } catch (NullPointerException error) {
-            System.out.println("Ce client n'existe pas.");
-            System.out.println("Souhaitez-vous ajouter cette personne comme nouveau client ?");
+            System.out.println("\nCe client n'existe pas.");
+            System.out.println("\nSouhaitez-vous ajouter cette personne comme nouveau client ?");
             System.out.println("o : oui | n : non");
             String choix = scanner.next();
             if (choix.equals("o")) {
@@ -108,7 +148,7 @@ public class BanqueInteractive {
 
 
     public static void interagir() {
-        System.out.println("Quelle opération voulez-vous effectuer ?");
+        System.out.println("\nQuelle opération souhaitez-vous effectuer ?");
         System.out.println("1) Ajouter un client");
         System.out.println("2) Effectuer une opération sur un client");
         System.out.println("3) Afficher un bilan général");
