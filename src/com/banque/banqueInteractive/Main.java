@@ -9,7 +9,7 @@ public class Main {
 
         String choix = "o";
 
-        while (choix == "o") {
+        while (choix.equals("o")) {
             BanqueInteractive.interagir();
             System.out.println("Voulez-vous faire autre chose ?");
             System.out.println("o : oui | n : non");

@@ -36,20 +36,22 @@ public class Client {
     }
 
     public void afficherSolde() {
-        System.out.println("Le solde global est : " + this.getSolde());
+        System.out.println("Solde global : " + this.getSolde() + " €");
     }
 
     public void deposer(Compte compte, float valeur) {
-
+        //this.solde = this.solde + valeur;
     }
 
     public void retirer(Compte compte, float valeur) {
 
     }
 
-    public void ajouterCompte() {
+    public String ajouterCompte() {
         Compte compte = new Compte();
+        String iban = compte.getIban();
         comptes[nbComptes] = compte;
         nbComptes ++;
+        return iban;
     }
 }

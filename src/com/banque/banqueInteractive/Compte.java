@@ -25,7 +25,7 @@ public class Compte {
     }
 
     public void afficherSolde() {
-        System.out.println("Le solde du compte numéro " + this.iban + " est " + this.solde);
+        System.out.println(this.iban + " : " + this.solde + " €");
     }
 
     public void virer(float valeur, Compte destinataire) {
