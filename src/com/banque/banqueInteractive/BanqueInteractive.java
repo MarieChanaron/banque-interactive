@@ -83,7 +83,11 @@ public class BanqueInteractive {
             return;
         }
         Compte compteCourant = client.getComptes()[0];
-        client.deposer(compteCourant, montant);
+        if (compteCourant != null) {
+            client.deposer(compteCourant, montant);
+        } else {
+            System.out.println("Ce client ne possède pas de compte bancaire.");
+        }
         System.out.println("\nNouveau solde du compte courant : " + compteCourant.getSolde() + " €");
     }
 
