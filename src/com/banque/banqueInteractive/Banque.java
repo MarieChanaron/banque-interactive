@@ -67,6 +67,6 @@ public class Banque {
                 break;
             }
         }
-        System.out.println("\nSOLDE GLOBAL : " + solde);
+        System.out.println("\nSOLDE GLOBAL : " + solde + "€");
     }
 }

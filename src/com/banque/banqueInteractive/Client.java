@@ -23,11 +23,7 @@ public class Client {
     }
 
     public float getSolde() {
-        float solde = 0;
-        for (int i = 0; i < nbComptes; i++) {
-            solde += comptes[i].getSolde();
-        }
-        return solde;
+        return this.solde;
     }
 
     public byte getNbComptes() {
@@ -41,7 +37,6 @@ public class Client {
     public void deposer(Compte compte, float valeur) {
         compte.setSolde(+valeur);
         this.solde += valeur;
-        System.out.println("\nNouveau solde du compte " + compte.getIban() + " : " + compte.getSolde() + " €");
     }
 
     public boolean retirer(Compte compte, float valeur) {
@@ -50,16 +45,16 @@ public class Client {
         if (solde >= valeur) {
             compte.setSolde(-valeur);
             this.solde -= valeur;
-            System.out.println("\nNouveau solde du compte " + compte.getIban() + " : " + compte.getSolde() + " €");
             succes = true;
-        } else {
-            System.out.println("\nLe compte " + compte.getIban() + " n'est pas suffisamment approvisionné pour pouvoir effectuer cette opération.");
         }
         return succes;
     }
 
     public String ajouterCompte() {
         Compte compte = new Compte();
+        if (nbComptes == 0) {
+            compte.setCourant();
+        }
         String iban = compte.getIban();
         comptes[nbComptes] = compte;
         nbComptes ++;

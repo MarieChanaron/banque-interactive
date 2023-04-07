@@ -1,6 +1,5 @@
 package com.banque.banqueInteractive;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class BanqueInteractive {
@@ -15,13 +14,13 @@ public class BanqueInteractive {
             System.out.println("\nEntrez le nom du client :");
             nomNouveauClient = scanner.next();
         }
-        banque.ajouterClient(nomNouveauClient);
+        Client client = banque.ajouterClient(nomNouveauClient);
         System.out.println("\nLe client " + nomNouveauClient + " a été ajouté.");
-        System.out.println("\nVoulez-vous effectuer une opération pour ce client ?");
+        System.out.println("\nVoulez-vous ouvrir un compte pour ce client ?");
         System.out.println("o : oui | n : non");
         String choix = scanner.next();
         if (choix.equals("o")) {
-            BanqueInteractive.effectuerOperationClient(nomNouveauClient);
+            BanqueInteractive.ouvrirCompte(client);
         }
     }
 
@@ -43,7 +42,12 @@ public class BanqueInteractive {
     public static void effectuerRetrait(Client client) {
         System.out.println("Combien souhaite retirer le client " + client.getNom() + " ?");
         float montant = scanner.nextFloat();
-        client.retirer(client.getComptes()[0], montant);
+        Compte compteCourant = client.getComptes()[0];
+        if (client.retirer(compteCourant, montant)) {
+            System.out.println("\nNouveau solde du compte courant : " + compteCourant.getSolde() + " €");
+        } else {
+            System.out.println("\nLe compte courant n'est pas suffisamment approvisionné pour pouvoir effectuer cette opération.");
+        }
     }
 
 
@@ -51,7 +55,9 @@ public class BanqueInteractive {
     public static void effectuerDepot(Client client) {
         System.out.println("Combien souhaite déposer le client " + client.getNom() + " ?");
         float montant = scanner.nextFloat();
-        client.deposer(client.getComptes()[0], montant);
+        Compte compteCourant = client.getComptes()[0];
+        client.deposer(compteCourant, montant);
+        System.out.println("\nNouveau solde du compte courant : " + compteCourant.getSolde() + " €");
     }
 
 
@@ -93,16 +99,27 @@ public class BanqueInteractive {
 
 
 
-    private static void effectuerOperationClient(String nomNouveauClient) {
+    private static void effectuerOperationClient(String nomParam) {
         String nom;
-        if (nomNouveauClient.length() == 0) {
-            System.out.println("\nEntrez le nom du client");
-            nom = scanner.next();
+
+        if (nomParam.length() == 0) {
+            System.out.println("\nPour quel client ?");
+            Client[] clients = banque.getClients();
+            for (int i = 0; i < clients.length; i++) {
+                if (clients[i] != null) {
+                    System.out.println((i + 1) + ") " + clients[i].getNom());
+                } else {
+                    break;
+                }
+            }
+            nom = clients[scanner.nextInt() - 1].getNom();
         } else {
-            nom = nomNouveauClient;
+            nom = nomParam;
         }
+
         try {
             Client client = banque.getClient(nom);
+
             System.out.println("\nQuelle opération voulez-vous effectuer ?");
             System.out.println("1) Ouvrir un compte");
             System.out.println("2) Afficher un bilan");
@@ -110,6 +127,7 @@ public class BanqueInteractive {
             System.out.println("4) Faire un dépôt");
             System.out.println("5) Faire un virement");
             int choix = scanner.nextInt();
+
             switch (choix) {
                 case 1:
                     BanqueInteractive.ouvrirCompte(client);
@@ -127,11 +145,14 @@ public class BanqueInteractive {
                     BanqueInteractive.effectuerVirement(client);
                     break;
             }
+
         } catch (NullPointerException error) {
             System.out.println("\nCe client n'existe pas.");
+
             System.out.println("\nSouhaitez-vous ajouter cette personne comme nouveau client ?");
             System.out.println("o : oui | n : non");
             String choix = scanner.next();
+
             if (choix.equals("o")) {
                 BanqueInteractive.ajouterClient(nom);
             }

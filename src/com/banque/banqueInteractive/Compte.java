@@ -6,6 +6,8 @@ public class Compte {
 
     private String iban;
     private float solde;
+    boolean courant = false;
+
 
     Compte() {
         this.iban = Compte.generateIban();
@@ -24,7 +26,14 @@ public class Compte {
         this.solde = this.solde + valeur;
     }
 
+    public void setCourant() {
+        this.courant = true;
+    }
+
     public void afficherSolde() {
+        if (this.courant) {
+            System.out.println("Compte courant :");
+        }
         System.out.println(this.iban + " : " + this.solde + " €");
     }
 
