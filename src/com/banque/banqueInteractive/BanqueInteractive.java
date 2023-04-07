@@ -9,13 +9,11 @@ public class BanqueInteractive {
 
 
 
-    private static void ajouterClient(String nomNouveauClient) {
-        if (nomNouveauClient == null) {
-            System.out.println("\nEntrez le nom du client :");
-            nomNouveauClient = scanner.next();
-        }
-        Client client = banque.ajouterClient(nomNouveauClient);
-        System.out.println("\nLe client " + nomNouveauClient + " a été ajouté.");
+    private static void ajouterClient() {
+        System.out.println("\nEntrez le nom du client :");
+        String nom = scanner.next();
+        Client client = banque.ajouterClient(nom);
+        System.out.println("\nLe client " + nom + " a été ajouté.");
         System.out.println("\nVoulez-vous ouvrir un compte pour ce client ?");
         System.out.println("o : oui | n : non");
         String choix = scanner.next();
@@ -28,7 +26,13 @@ public class BanqueInteractive {
 
     public static void ouvrirCompte(Client client) {
         String iban = client.ajouterCompte();
-        System.out.println("\nLe compte a été ajouté avec le numéro " + iban);
+        System.out.println("\nLe compte a été ajouté avec le numéro \n" + iban);
+        System.out.println("\nSouhaitez-vous effectuer une opération pour le client " + client.getNom() + " ?");
+        System.out.println("o : oui | n : non");
+        String choix = scanner.next();
+        if (choix.equals("o")) {
+            BanqueInteractive.effectuerOperationClient(client);
+        }
     }
 
 
@@ -40,20 +44,24 @@ public class BanqueInteractive {
 
 
     public static void effectuerRetrait(Client client) {
-        System.out.println("Combien souhaite retirer le client " + client.getNom() + " ?");
-        float montant = scanner.nextFloat();
-        Compte compteCourant = client.getComptes()[0];
-        if (client.retirer(compteCourant, montant)) {
-            System.out.println("\nNouveau solde du compte courant : " + compteCourant.getSolde() + " €");
+        if (client.getComptes()[0] != null && client.getSolde() != 0) {
+            System.out.println("Combien souhaite retirer le client " + client.getNom() + " ?");
+            float montant = scanner.nextFloat();
+            Compte compteCourant = client.getComptes()[0];
+            if (client.retirer(compteCourant, montant)) {
+                System.out.println("\nNouveau solde du compte courant : " + compteCourant.getSolde() + " €");
+            } else {
+                System.out.println("\nLe compte courant n'est pas suffisamment approvisionné pour pouvoir effectuer cette opération.");
+            }
         } else {
-            System.out.println("\nLe compte courant n'est pas suffisamment approvisionné pour pouvoir effectuer cette opération.");
+            System.out.println("\nLe compte courant du client n'est pas approvisionné.");
         }
     }
 
 
 
     public static void effectuerDepot(Client client) {
-        System.out.println("Combien souhaite déposer le client " + client.getNom() + " ?");
+        System.out.println("\nCombien souhaite déposer le client " + client.getNom() + " ?");
         float montant = scanner.nextFloat();
         Compte compteCourant = client.getComptes()[0];
         client.deposer(compteCourant, montant);
@@ -65,6 +73,12 @@ public class BanqueInteractive {
     public static void effectuerVirement(Client client) {
 
         int nbComptes = client.getNbComptes();
+
+        if (nbComptes < 2 || client.getSolde() == 0) {
+            System.out.println("\nOpération impossible");
+            return;
+        }
+
         Compte[] comptes = client.getComptes();
 
         System.out.println("\nDe quel compte le/la client(e) " + client.getNom() + " souhaite effectuer un virement ?");
@@ -87,7 +101,7 @@ public class BanqueInteractive {
         int choix2 = scanner.nextInt();
         Compte destination = destinations[choix2 - 1];
 
-        System.out.println("Vous souhaitez effectuer un virement du compte " + origine.getIban() + " vers le compte " + destination.getIban() + ".");
+        System.out.println("Vous souhaitez effectuer un virement du compte " + origine.getIban() + "\nvers le compte " + destination.getIban() + ".");
         System.out.println("Veuillez saisir le montant :");
         float montant = scanner.nextFloat();
 
@@ -99,26 +113,25 @@ public class BanqueInteractive {
 
 
 
-    private static void effectuerOperationClient(String nomParam) {
-        String nom;
+    private static void effectuerOperationClient(Client clientParam) {
 
-        if (nomParam.length() == 0) {
-            System.out.println("\nPour quel client ?");
-            Client[] clients = banque.getClients();
-            for (int i = 0; i < clients.length; i++) {
-                if (clients[i] != null) {
-                    System.out.println((i + 1) + ") " + clients[i].getNom());
-                } else {
-                    break;
-                }
-            }
-            nom = clients[scanner.nextInt() - 1].getNom();
-        } else {
-            nom = nomParam;
+        if (banque.getNbClients() == 0) {
+            System.out.println("\nLa banque ne compte actuellement aucun client.");
+            return;
         }
 
-        try {
-            Client client = banque.getClient(nom);
+        Client client = clientParam;
+        String reponse;
+
+        do {
+            if (client == null) {
+                System.out.println("\nPour quel client ?");
+                Client[] clients = banque.getClients();
+                for (int i = 0; i < banque.getNbClients(); i++) {
+                    System.out.println((i + 1) + ") " + clients[i].getNom());
+                }
+                client = clients[scanner.nextInt() - 1];
+            }
 
             System.out.println("\nQuelle opération voulez-vous effectuer ?");
             System.out.println("1) Ouvrir un compte");
@@ -146,17 +159,11 @@ public class BanqueInteractive {
                     break;
             }
 
-        } catch (NullPointerException error) {
-            System.out.println("\nCe client n'existe pas.");
-
-            System.out.println("\nSouhaitez-vous ajouter cette personne comme nouveau client ?");
+            System.out.println("\nAvez-vous fini avec le client " + client.getNom() + " ?");
             System.out.println("o : oui | n : non");
-            String choix = scanner.next();
+            reponse = scanner.next();
 
-            if (choix.equals("o")) {
-                BanqueInteractive.ajouterClient(nom);
-            }
-        }
+        } while (!reponse.equals("o"));
 
     }
 
@@ -177,10 +184,10 @@ public class BanqueInteractive {
 
         switch (choix) {
             case 1:
-                BanqueInteractive.ajouterClient(null);
+                BanqueInteractive.ajouterClient();
                 break;
             case 2:
-                BanqueInteractive.effectuerOperationClient("");
+                BanqueInteractive.effectuerOperationClient(null);
                 break;
             case 3:
                 BanqueInteractive.afficherBilanGeneral();

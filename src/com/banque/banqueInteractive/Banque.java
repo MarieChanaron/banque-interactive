@@ -6,14 +6,20 @@ public class Banque {
 
     private String nom;
     private Client[] clients;
+    private long nbClients;
 
     Banque(String nom) {
         this.clients = new Client[1_000_000_000];
         this.nom = nom;
+        this.nbClients = 0;
     }
 
     public Client[] getClients() {
         return this.clients;
+    }
+
+    public long getNbClients() {
+        return this.nbClients;
     }
 
     public Client getClient(String nom) {
@@ -35,6 +41,7 @@ public class Banque {
                 break;
             }
         }
+        this.nbClients ++;
         return client;
     }
 
