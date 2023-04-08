@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Compte {
 
-    private String iban;
+    private UUID iban;
     private float solde;
     boolean courant = false;
 
@@ -14,7 +14,7 @@ public class Compte {
         this.solde = 0;
     }
 
-    public String getIban() {
+    public UUID getIban() {
         return this.iban;
     }
 
@@ -42,8 +42,8 @@ public class Compte {
         destinataire.setSolde(valeur);
     }
 
-    public static String generateIban() {
-        String iban = UUID.randomUUID().toString();
+    public static UUID generateIban() {
+        UUID iban = UUID.randomUUID();
         return iban;
     }
 

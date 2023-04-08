@@ -24,10 +24,9 @@ public class Banque {
 
     public Client getClient(String nom) {
         Client client = null;
-        for (int i = 0; i < clients.length; i++) {
+        for (int i = 0; i < nbClients; i++) {
             if (clients[i].getNom().equals(nom)) {
                 client = clients[i];
-                break;
             }
         }
         return client;

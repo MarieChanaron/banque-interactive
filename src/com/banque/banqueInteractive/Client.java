@@ -1,5 +1,7 @@
 package com.banque.banqueInteractive;
 
+import java.util.UUID;
+
 public class Client {
 
     private String nom;
@@ -50,12 +52,12 @@ public class Client {
         return succes;
     }
 
-    public String ajouterCompte() {
+    public UUID ajouterCompte() {
         Compte compte = new Compte();
         if (nbComptes == 0) {
             compte.setCourant();
         }
-        String iban = compte.getIban();
+        UUID iban = compte.getIban();
         comptes[nbComptes] = compte;
         nbComptes ++;
         return iban;

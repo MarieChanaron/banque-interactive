@@ -1,6 +1,7 @@
 package com.banque.banqueInteractive;
 
 import java.util.Scanner;
+import java.util.UUID;
 
 public class BanqueInteractive {
 
@@ -25,7 +26,7 @@ public class BanqueInteractive {
 
 
     public static void ouvrirCompte(Client client) {
-        String iban = client.ajouterCompte();
+        UUID iban = client.ajouterCompte();
         System.out.println("\nLe compte a été ajouté avec le numéro \n" + iban);
         System.out.println("\nSouhaitez-vous effectuer une opération pour le client " + client.getNom() + " ?");
         System.out.println("o : oui | n : non");
